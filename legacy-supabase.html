@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Trading Paper — my portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Georgian:wght@400;700;800;900&family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fffdf7;--bg:#f4f1ea;--ink:#1a1a1a;--muted:#6b6b6b;--border:#d9d4c8;--rule:#1a1a1a;--red:#b91c1c;--green:#166534;--gold:#8b6914;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Serif Georgian',Georgia,serif;margin:0;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 60px;}
+header.top{border-bottom:3px double var(--rule);padding:22px 0 14px;margin-bottom:26px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;}
+header.top h1{font-weight:900;font-size:30px;margin:0;letter-spacing:-0.5px;}
+header.top .tag{font-family:'Noto Sans Georgian',sans-serif;font-size:11px;font-style:italic;color:var(--muted);}
+.who{font-family:'Noto Sans Georgian',sans-serif;font-size:12px;color:var(--muted);display:flex;gap:12px;align-items:center;}
+.who a{color:var(--red);cursor:pointer;text-decoration:underline;}
+.hidden{display:none!important;}
+
+/* ---- auth card ---- */
+.auth{max-width:380px;margin:6vh auto 0;background:var(--paper);border:1px solid var(--border);border-top:3px double var(--ink);border-bottom:3px double var(--ink);padding:30px 26px;box-shadow:0 16px 50px rgba(0,0,0,.10);}
+.auth h2{text-align:center;font-weight:900;font-size:24px;margin:0 0 2px;}
+.auth .sub{text-align:center;font-family:'Noto Sans Georgian',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:20px;}
+.tabs{display:flex;margin-bottom:18px;border:1px solid var(--border);}
+.tabs button{flex:1;padding:9px;background:var(--paper);border:none;cursor:pointer;font-family:'Noto Sans Georgian',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);}
+.tabs button.active{background:var(--ink);color:#fff;}
+label{display:block;text-align:left;font-family:'Noto Sans Georgian',sans-serif;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
+input,select{display:block;width:100%;margin:0 0 13px;padding:11px 12px;font-size:16px;border:1px solid #ccc;background:#fff;font-family:'Noto Sans Georgian',sans-serif;}
+input:focus,select:focus{outline:2px solid var(--red);outline-offset:1px;}
+button.main{width:100%;padding:12px;background:var(--ink);color:#fff;border:none;font-size:12px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;font-family:'Noto Sans Georgian',sans-serif;}
+button.main:hover{background:var(--red);}
+.msg{min-height:18px;font-family:'Noto Sans Georgian',sans-serif;font-size:12px;margin-top:10px;text-align:center;}
+.msg.err{color:var(--red);} .msg.ok{color:var(--green);}
+
+/* ---- dashboard ---- */
+.card{background:var(--paper);border:1px solid var(--border);padding:18px 20px;margin-bottom:22px;}
+.card h3{font-family:'Noto Sans Georgian',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin:0 0 14px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.totals{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;}
+@media(max-width:620px){.totals{grid-template-columns:1fr;}}
+.totals .box{background:var(--paper);border:1px solid var(--border);border-top:3px double var(--rule);padding:16px 16px;}
+.totals .box .k{font-family:'Noto Sans Georgian',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.totals .box .v{font-size:28px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:4px;}
+.frm{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end;}
+@media(max-width:720px){.frm{grid-template-columns:1fr 1fr;}}
+.frm input,.frm select{margin:0;}
+.frm button{padding:11px 16px;background:var(--ink);color:#fff;border:none;cursor:pointer;font-family:'Noto Sans Georgian',sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:1px;}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;}
+th,td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--border);font-size:14px;}
+th{font-family:'Noto Sans Georgian',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+th:first-child,td:first-child{text-align:left;}
+td .del{color:var(--red);cursor:pointer;border:none;background:none;font-size:15px;}
+.empty{font-family:'Noto Sans Georgian',sans-serif;font-size:13px;color:var(--muted);font-style:italic;padding:14px 2px;}
+footer{text-align:center;font-family:'Noto Sans Georgian',sans-serif;font-size:11px;color:var(--muted);border-top:3px double var(--rule);margin-top:40px;padding:16px 10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1>The Trading Paper</h1><div class="tag">ცოცხალი პორტფელი · your private book</div></div>
+    <div class="who hidden" id="who"><span id="who-name"></span><a id="logout">გასვლა</a></div>
+  </header>
+
+  <!-- AUTH -->
+  <section class="auth" id="auth-view">
+    <h2>The Trading Paper</h2>
+    <div class="sub" id="auth-sub">შესვლა · Sign in</div>
+    <div class="tabs">
+      <button id="tab-login" class="active">შესვლა</button>
+      <button id="tab-reg">რეგისტრაცია</button>
+    </div>
+    <div id="reg-name-wrap" class="hidden">
+      <label>სახელი · Name</label>
+      <input id="f-name" type="text" autocomplete="name">
+    </div>
+    <label>ელფოსტა · Email</label>
+    <input id="f-email" type="email" autocomplete="email">
+    <label>პაროლი · Password</label>
+    <input id="f-pass" type="password" autocomplete="current-password">
+    <button class="main" id="auth-go">შესვლა</button>
+    <div class="msg" id="auth-msg"></div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="app-view" class="hidden">
+    <div class="totals">
+      <div class="box"><div class="k">პოზიციები · Positions</div><div class="v" id="t-count">0</div></div>
+      <div class="box"><div class="k">ჩადებული (cost) · Invested</div><div class="v" id="t-cost">$0</div></div>
+      <div class="box"><div class="k">წიგნები · Books</div><div class="v" id="t-books">0</div></div>
+    </div>
+
+    <div class="card">
+      <h3>ახალი პოზიცია · Add position</h3>
+      <div class="frm">
+        <div><label>Ticker</label><input id="h-ticker" type="text" placeholder="AAPL"></div>
+        <div><label>წიგნი · Book</label><input id="h-book" type="text" placeholder="BOG" value="MAIN"></div>
+        <div><label>რაოდ. · Shares</label><input id="h-shares" type="number" step="any" placeholder="10"></div>
+        <div><label>საშ. ფასი · Avg $</label><input id="h-price" type="number" step="any" placeholder="150"></div>
+        <button id="h-add">დამატება</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>ჩემი პორტფელი · Holdings</h3>
+      <table>
+        <thead><tr><th>Ticker</th><th>Book</th><th>Shares</th><th>Avg $</th><th>Cost $</th><th></th></tr></thead>
+        <tbody id="h-body"></tbody>
+      </table>
+      <div class="empty hidden" id="h-empty">ჯერ პოზიცია არ გაქვს. დაამატე პირველი ზემოთ.</div>
+    </div>
+  </section>
+
+  <footer>© The Trading Paper · multi-user preview · ეს არ არის ფინანსური რჩევა</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+(function(){
+  var URL = window.TTP_SUPABASE_URL, KEY = window.TTP_SUPABASE_ANON_KEY;
+  var $ = function(id){ return document.getElementById(id); };
+  var msg = function(t, ok){ var m=$('auth-msg'); m.textContent=t; m.className='msg '+(ok?'ok':'err'); };
+
+  if(!URL || URL.indexOf('PASTE')===0){
+    msg('config.js არ არის შევსებული — ჩასვი Supabase URL და anon key.'); return;
+  }
+  var sb = window.supabase.createClient(URL, KEY);
+  var mode = 'login';
+
+  // ---- tabs ----
+  function setMode(m){
+    mode=m;
+    $('tab-login').classList.toggle('active', m==='login');
+    $('tab-reg').classList.toggle('active', m==='reg');
+    $('reg-name-wrap').classList.toggle('hidden', m!=='reg');
+    $('auth-sub').textContent = m==='login' ? 'შესვლა · Sign in' : 'რეგისტრაცია · Create account';
+    $('auth-go').textContent  = m==='login' ? 'შესვლა' : 'ანგარიშის შექმნა';
+    $('f-pass').autocomplete  = m==='login' ? 'current-password' : 'new-password';
+    msg('');
+  }
+  $('tab-login').onclick=function(){setMode('login');};
+  $('tab-reg').onclick=function(){setMode('reg');};
+
+  // ---- auth actions ----
+  $('auth-go').onclick = async function(){
+    var email=$('f-email').value.trim(), pass=$('f-pass').value;
+    if(!email || !pass){ msg('შეავსე ელფოსტა და პაროლი.'); return; }
+    $('auth-go').disabled=true;
+    try{
+      if(mode==='login'){
+        var r=await sb.auth.signInWithPassword({email:email,password:pass});
+        if(r.error) throw r.error;
+      }else{
+        var name=$('f-name').value.trim();
+        var r2=await sb.auth.signUp({email:email,password:pass,options:{data:{display_name:name}}});
+        if(r2.error) throw r2.error;
+        if(!r2.data.session){ msg('შეამოწმე ელფოსტა დასადასტურებლად, მერე შედი.', true); $('auth-go').disabled=false; return; }
+      }
+      await showApp();
+    }catch(e){ msg(e.message || 'შეცდომა'); }
+    $('auth-go').disabled=false;
+  };
+  $('logout').onclick = async function(){ await sb.auth.signOut(); location.reload(); };
+
+  // ---- dashboard ----
+  async function showApp(){
+    var s=(await sb.auth.getSession()).data.session;
+    if(!s){ $('auth-view').classList.remove('hidden'); $('app-view').classList.add('hidden'); $('who').classList.add('hidden'); return; }
+    $('auth-view').classList.add('hidden');
+    $('app-view').classList.remove('hidden');
+    $('who').classList.remove('hidden');
+    var prof=await sb.from('profiles').select('display_name').eq('id',s.user.id).maybeSingle();
+    $('who-name').textContent = (prof.data && prof.data.display_name) ? prof.data.display_name : s.user.email;
+    await loadHoldings();
+  }
+
+  async function loadHoldings(){
+    var r=await sb.from('holdings').select('*').order('created_at',{ascending:true});
+    var rows=r.data||[];
+    var body=$('h-body'); body.innerHTML='';
+    var cost=0, books={};
+    rows.forEach(function(h){
+      var c=(+h.shares)*(+h.avg_price); cost+=c; books[h.book]=1;
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+esc(h.ticker)+'</td><td>'+esc(h.book)+'</td><td>'+fmt(h.shares)+'</td><td>$'+fmt(h.avg_price)+'</td><td>$'+money(c)+'</td>'+
+        '<td><button class="del" title="წაშლა">✕</button></td>';
+      tr.querySelector('.del').onclick=async function(){ await sb.from('holdings').delete().eq('id',h.id); loadHoldings(); };
+      body.appendChild(tr);
+    });
+    $('h-empty').classList.toggle('hidden', rows.length>0);
+    $('t-count').textContent=rows.length;
+    $('t-cost').textContent='$'+money(cost);
+    $('t-books').textContent=Object.keys(books).length;
+  }
+
+  $('h-add').onclick=async function(){
+    var t=$('h-ticker').value.trim().toUpperCase();
+    var b=($('h-book').value.trim()||'MAIN').toUpperCase();
+    var sh=parseFloat($('h-shares').value), pr=parseFloat($('h-price').value);
+    if(!t || isNaN(sh) || isNaN(pr)){ alert('შეავსე ticker, რაოდენობა და ფასი.'); return; }
+    var r=await sb.from('holdings').insert({ticker:t,book:b,shares:sh,avg_price:pr});
+    if(r.error){ alert(r.error.message); return; }
+    $('h-ticker').value='';$('h-shares').value='';$('h-price').value='';
+    loadHoldings();
+  };
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function fmt(n){n=+n;return (Math.round(n*10000)/10000).toString();}
+  function money(n){return (+n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+  // keep session across reloads
+  sb.auth.onAuthStateChange(function(_e,_s){});
+  showApp();
+})();
+</script>
+</body>
+</html>
